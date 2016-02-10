@@ -1,0 +1,24 @@
+{
+  "name": "tensorflow-aws",
+  "version": "1.0.0",
+  "description": "Some testing on AWS, with the goal of using TensorFlow",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cchan/tensorflow-aws.git"
+  },
+  "author": "Clive Chan (http://clive.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cchan/tensorflow-aws/issues"
+  },
+  "homepage": "https://github.com/cchan/tensorflow-aws#readme"
+}
