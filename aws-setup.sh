@@ -4,6 +4,11 @@ echo "Now, scp ~/.ssh/id_rsa.pub and paste this public key into GitHub."
 read -p "Press enter to continue."
 
 
+# INSTALL git
+sudo yum -y install git
+git config --global --edit
+
+
 # INSTALL numpy
 sudo yum -y install gcc-c++ python27-devel atlas-sse3-devel lapack-devel
 wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.2.tar.gz
@@ -15,7 +20,6 @@ pip install numpy
 
 # INSTALL Twisted and TEST python server
 sudo pip install twisted
-sudo yum -y install git
 mkdir tf
 git clone git@github.com:cchan/tensorflow-aws tf
 echo "About to test Python server. Here is your current AWS IPv4 address:"
