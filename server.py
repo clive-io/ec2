@@ -1,16 +1,22 @@
 # https://stackoverflow.com/questions/18732250/installing-numpy-on-amazon-ec2
-
 # https://docs.python.org/2/library/simplehttpserver.html
+# https://twistedmatrix.com/trac/
 
-import SimpleHTTPServer
-import SocketServer
 
-PORT = 80
+from twisted.web import server, resource
+from twisted.internet import reactor, endpoints
 
-Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+class Counter(resource.Resource):
+    isLeaf = True
+    numberRequests = 0
+    def render_GET(self, request):
+        print "Requested: ", request.uri
+        self.numberRequests += 1
+        request.setHeader(b"content-type", b"text/plain")
+        content = u"I am request #{}\n".format(self.numberRequests)
+        return content.encode("ascii")
 
-httpd = SocketServer.TCPServer(("",PORT), Handler)
-
-print "serving at port", PORT
-httpd.serve_forever()
+endpoints.serverFromString(reactor, "tcp:80").listen(server.Site(Counter()))
+print "Listening on tcp:80..."
+reactor.run()
 
