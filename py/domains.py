@@ -9,6 +9,7 @@ from twisted.internet import reactor, endpoints
 import re
 import os
 import shutil
+import mimetypes
 
 PROTOCOL = "http"
 ROOTDOMAIN = "ec2.clive.io"
@@ -16,6 +17,8 @@ ROOTDOMAIN = "ec2.clive.io"
 class Server(resource.Resource):
   isLeaf = True
   def send404(self, request, message=""):
+    request.setHeader(b"content-type", b"text/html")
+
     with open("templates/404.html") as page404:
       out = page404.read()
       out = out.replace("{msg}", message) \
@@ -25,6 +28,8 @@ class Server(resource.Resource):
       request.setResponseCode(404)
       
       return out
+
+
   def render_GET(self, request):
     host = request.requestHeaders.getRawHeaders('Host', [None])[0].split(':')[0].split('?')[0]
     if host.find(ROOTDOMAIN) == -1:
@@ -34,8 +39,6 @@ class Server(resource.Resource):
 
     host = host[:-len("."+ROOTDOMAIN)]
     print "Requested: HOST [" + host + "], URI [" + uri + "]"
-
-    request.setHeader(b"content-type", b"text/html")
 
     if host == "":
       if uri == '/' or uri == '/index.html':
@@ -61,7 +64,11 @@ class Server(resource.Resource):
             realpath += "/index.htm"
           else:
             with open("templates/index.html") as content_file:
+              request.setHeader(b"content-type", b"text/html")
               return content_file.read().replace("{host}", host)
+
+        contenttype = mimetypes.guess_type(uri)[0]
+        request.setHeader(b"content-type", contenttype)
 
         if os.path.isfile(realpath):
           with open(realpath) as content_file:
