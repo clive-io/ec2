@@ -10,6 +10,7 @@ git config --global --edit
 
 
 # INSTALL numpy
+# https://stackoverflow.com/questions/18732250/installing-numpy-on-amazon-ec2
 sudo yum -y install gcc-c++ python27-devel atlas-sse3-devel lapack-devel
 wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.2.tar.gz
 tar xzf virtualenv-1.11.2.tar.gz
