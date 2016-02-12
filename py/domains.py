@@ -55,10 +55,10 @@ class Server(resource.Resource):
         return server.NOT_DONE_YET
       if realpath.startswith(rootpath):
         if uri == '/':
-          if os.path.isfile(realpath+"index.html"):
-            realpath += "index.html"
-          elif os.path.isfile(realpath+"index.htm"):
-            realpath += "index.htm"
+          if os.path.isfile(realpath+"/index.html"):
+            realpath += "/index.html"
+          elif os.path.isfile(realpath+"/index.htm"):
+            realpath += "/index.htm"
           else:
             with open("templates/index.html") as content_file:
               return content_file.read().replace("{host}", host)
