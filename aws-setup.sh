@@ -1,3 +1,8 @@
+# AWS EC2 Setup Script
+# Git
+# Python: Numpy, Twisted, Tensorflow (assumes python and pip)
+# Nodejs: Node, NPM
+
 sudo yum update
 ssh-keygen
 echo "Now, scp ~/.ssh/id_rsa.pub and paste this public key into GitHub."
@@ -21,17 +26,17 @@ pip install numpy
 
 # INSTALL Twisted and TEST python server
 sudo pip install twisted
-mkdir tf
-git clone git@github.com:cchan/tensorflow-aws tf
+mkdir gh
+git clone git@github.com:cchan/tensorflow-aws gh
 echo "About to test Python server. Here is your current AWS IPv4 address:"
 wget -qO- http://instance-data/latest/meta-data/public-ipv4
-sudo python tf/server-test.py
+sudo python gh/py/server-test.py
 
 
 # INSTALL and TEST tensorflow
 sudo pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.6.0-cp27-none-linux_x86_64.whl
 echo "Testing TensorFlow..."
-python tf/tf-test.py
+python gh/tf/tf-test.py
 read -p "That should've printed 'Hello, TensorFlow!' and '42'."
 
 
@@ -57,11 +62,12 @@ cd ..
 
 
 # TEST node server
-cd tf
+cd gh/node
 npm install
 echo "About to test Node server. Here is your current AWS IPv4 address:"
 wget -qO- http://instance-data/latest/meta-data/public-ipv4
 sudo node server-test.js
+cd ../..
 
 
 read -p "DONE with aws-setup! Press enter to end."
