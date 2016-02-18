@@ -4,14 +4,20 @@
 # Copyright (c) 2016, Clive Chan
 # MIT License
 
-from twisted.web import server, resource
-from twisted.internet import reactor, endpoints
+from twisted.web import server, resource, util
+from twisted.internet import reactor, endpoints, ssl
+from twisted.python import urlpath
 import re
 import os
 import shutil
 import mimetypes
 
-PROTOCOL = "http"
+# HTTPS:
+# letsencrypt.org/howitworks
+# blog.vrplumber.com/b/2004/09/26/howto-create-an-ssl/
+
+PORT = 443
+PROTOCOL = "https"
 ROOTDOMAIN = "ec2.clive.io"
 
 class Server(resource.Resource):
@@ -76,7 +82,31 @@ class Server(resource.Resource):
 
     return self.send404(request)
 
-endpoints.serverFromString(reactor, "tcp:80").listen(server.Site(Server()))
-print "Listening on tcp:80..."
-reactor.run()
+sslContext = ssl.DefaultOpenSSLContextFactory(
+  '/etc/letsencrypt/live/ec2.clive.io/privkey.pem',
+  '/etc/letsencrypt/live/ec2.clive.io/cert.pem'
+)
+print "Listening on port", PORT, "..."
 
+# stackoverflow.com/a/6064270/1181387
+class HTTPRedirect(resource.Resource):
+  isLeaf = False
+  def __init__(self):
+    resource.Resource.__init__(self)
+    self.newScheme = "https"
+  def render(self, request):
+    newURLPath = request.URLPath()
+    if newURLPath.scheme == self.newScheme:
+      raise ValueError("Redirect loop")
+    newURLPath.scheme = self.newScheme
+    return util.redirectTo(newURLPath.__str__(), request)
+  def getChild(self, name, request):
+    return self
+
+reactor.listenTCP(80, server.Site(HTTPRedirect()))
+reactor.listenSSL(
+  PORT,
+  server.Site(Server()),
+  contextFactory = sslContext
+)
+reactor.run()
