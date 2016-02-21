@@ -1,1 +1,1 @@
-@monthly ~/letsencrypt/letsencrypt-auto renew >> letsencrypt-renew-crontab.log
+@monthly ~/letsencrypt/letsencrypt-auto renew --agree-tos --email cc@clive.io >> letsencrypt-renew-crontab.log
