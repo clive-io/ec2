@@ -93,7 +93,7 @@ class HTTPS_Server(Server):
       page = registrar_render(request)
       return self.send404(request) if page is None else page
     elif host != None:
-      return self.redirScheme("http")
+      return self.redirScheme(request, "http")
     else:
       return self.send404(request)
 
@@ -103,7 +103,7 @@ class HTTP_Server(Server):
     print("HTTP, HOST [" + host + "], URI [" + getURI(request) + "]")
 
     if host == "":
-      return self.redirScheme("https")
+      return self.redirScheme(request, "https")
     elif re.compile('^[a-zA-Z0-9_]+$').match(host):
       page = relay_render(request)
       return self.send404(request) if page is None else page
