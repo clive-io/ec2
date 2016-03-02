@@ -3,7 +3,8 @@
 # Python: Numpy, Twisted, Tensorflow (assumes python and pip)
 # Nodejs: Node, NPM
 
-cd ~
+INSTALLROOT="~/aws-setup"
+cd $INSTALLROOT
 
 sudo yum update
 ssh-keygen -b 4096
@@ -55,7 +56,7 @@ make && sudo make install
 read -p "About to test node. [enter]"
 node "../gh/node/node-test.js"
 read -p "Tested node. Should've outputted 'Hello world!'. [enter]"
-cd ..
+cd $INSTALLROOT
 
 
 # INSTALL npm
@@ -65,7 +66,7 @@ echo "Now, add ':/usr/local/bin' to the line 'Defaults secure_path = ...' in sud
 read -p "Ready?"
 sudo nano /etc/sudoers
 sudo make install
-cd ..
+cd $INSTALLROOT
 
 
 # TEST node server
@@ -74,7 +75,11 @@ npm install
 echo "About to test Node server. Here is your current AWS IPv4 address:"
 wget -qO- http://instance-data/latest/meta-data/public-ipv4
 sudo node server-test.js
-cd ../..
+cd $INSTALLROOT
 
+
+# SETUP HTTPS
+git clone git@github.com:letsencrypt/letsencrypt
+sudo letsencrypt/letsencrypt-auto certonly -d ec2.clive.io --debug
 
 read -p "DONE with aws-setup! Press enter to end."
