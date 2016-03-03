@@ -1,13 +1,23 @@
+# To use this, you need to put your AWS API credentials into /etc/boto.cfg
+# Access these under "Security Credentials" >> "Users" >> "Create Access Key"
+# [Credentials]
+# aws_access_key_id = <access_key>
+# aws_secret_access_key = <secret_key>
+
+# Also make sure for FTP that you open 21 and 50000-51000 to TCP.
+
+
 from pyftpdlib.authorizers import DummyAuthorizer, AuthenticationFailed, AuthorizerError
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
-
 
 import boto
 from boto.ec2.connection import EC2Connection
 from boto.dynamodb2.table import Table
 import hashlib
 import os
+import urllib2
+
 
 """usertable = Table("ec2.clive.io-subdomains")"""
 class UserAuthError(Exception):
@@ -43,7 +53,7 @@ class DBAuthorizer(DummyAuthorizer):
       raise AuthenticationFailed("Authentication Failed.")
     try:
       item = self.user_db.get_item(username=username)
-    except boto.dynamodb2.exceptions.DynamoDBKeyNotFoundError:
+    except:
       raise AuthenticationFailed("Authentication failed.")
     if item['passhash'] != hashlib.sha1(password + item['passsalt']).hexdigest():
       raise AuthenticationFailed("Authentication failed.")
@@ -53,7 +63,7 @@ authorizer = DBAuthorizer()
 
 handler = FTPHandler
 handler.authorizer = authorizer
-handler.masquerade_address = '54.152.214.231'
+handler.masquerade_address = urllib2.urlopen("http://instance-data/latest/meta-data/public-ipv4").read()
 handler.passive_ports = [50000, 51000]
 
 server = FTPServer(('', 21), handler)
