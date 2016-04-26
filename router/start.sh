@@ -1,1 +1,1 @@
-nohup sudo node index.js >/dev/null &
+nohup sudo node router.js >/dev/null &
