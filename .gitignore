@@ -3,3 +3,4 @@ serverfiles
 *.log
 *.pyc
 tf/MNIST_data
+router/certs
