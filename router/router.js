@@ -42,7 +42,8 @@ app.post(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
   proxy.register(req.params[0], 'http://localhost:' + req.params[1], {
     ssl: {
       key: req.body.key, //if they're both undefined (as above), then this makes no difference.
-      cert: req.body.cert
+      cert: req.body.cert,
+      ca: req.body.ca
     }
   });
   res.send('Registered: https://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1] + '\n');
