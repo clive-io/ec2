@@ -1,7 +1,10 @@
+var fs = require('fs');
 var proxy = require('redbird')({port: 80, xfwd: false});
 var express = require('express');
 var app = express();
 var http =  require('http').Server(app);
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );
 
 app.get('/', function(req, res){
   var outstring = 'Proxy paths:\n';
@@ -15,7 +18,27 @@ app.get('/', function(req, res){
 
 app.get(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
   proxy.register(req.params[0], 'http://localhost:' + req.params[1]);
-  res.send('Registered: ' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1]);
+  res.send('Registered: http://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1]);
+});
+app.post(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
+  if(req.body.key == undefined || req.body.cert == undefined){
+    res.send('Failure: SSL key or cert not provided as POST params');
+    return;
+  }else try{
+    fs.accessSync(req.body.key);
+    fs.accessSync(req.body.cert);
+  }catch(e){
+    res.send('Failure: SSL key or cert not accessible');
+    return;
+  }
+  
+  proxy.register(req.params[0], 'http://localhost:' + req.params[1], {
+    ssl: {
+      key: req.body.key,
+      cert: req.body.cert
+    }
+  });
+  res.send('Registered: https://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1]);
 });
 
 app.get(/^\/unregister\/([a-zA-Z0-9\.]+)/, function(req, res){
