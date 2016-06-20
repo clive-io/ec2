@@ -27,7 +27,7 @@ app.get('/', function(req, res){
 
 app.get(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
   proxy.register(req.params[0], 'http://localhost:' + req.params[1]);
-  res.send('Registered: http://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1]);
+  res.send('Registered: http://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1] + '\n');
 });
 app.post(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
   if(req.body.key !== undefined || req.body.cert !== undefined){
@@ -35,23 +35,22 @@ app.post(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
       fs.accessSync(req.body.key);
       fs.accessSync(req.body.cert);
     }catch(e){
-      res.send('Failure: provided SSL key or cert not accessible');
+      res.send('Failure: provided SSL key or cert not accessible\n');
       return;
     }
   }
-  
   proxy.register(req.params[0], 'http://localhost:' + req.params[1], {
     ssl: {
-      key: req.body.key,
+      key: req.body.key, //if they're both undefined (as above), then this makes no difference.
       cert: req.body.cert
     }
   });
-  res.send('Registered: https://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1]);
+  res.send('Registered: https://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1] + '\n');
 });
 
 app.get(/^\/unregister\/([a-zA-Z0-9\.]+)/, function(req, res){
   proxy.unregister(req.params[0]);
-  res.send('Unregistered: ' + req.params[0]);
+  res.send('Unregistered: ' + req.params[0] + '\n');
 });
 
 http.on('listening', function(){
