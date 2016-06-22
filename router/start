@@ -1,1 +1,11 @@
-sudo PM2_HOME='/home/ec2-user/.pm2' pm2 start router.js --name="revprox"
+# You'll want to run `sudo pm2 startup amazon` and `sudo pm2 save`.
+
+# Unfortunately, pm2 startup doesn't work very well, and I had to rename
+#  the startup script for ec2-user manually to pm2-init-ec2-user (which 
+#  runs all my stuff as ec2-user) to distinguish it from the root startup 
+#  script (which manages the proxy as root).
+# If https://github.com/Unitech/pm2/pull/1202 gets merged and released,
+#  I won't need to do that in the future.
+
+
+sudo pm2 start router.js --name="revprox"
