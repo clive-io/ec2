@@ -1,0 +1,16 @@
+{
+  "name": "mailerr",
+  "version": "1.0.0",
+  "description": "mail error messages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Clive Chan (cc@clive.io)",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "nodemailer": "^2.4.2"
+  }
+}
