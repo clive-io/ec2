@@ -1,29 +1,31 @@
-var secrets = require('secrets.js');
-var nodemailer = require('nodemailer');
+var secrets = require('./secrets.js');
 var app = require('express')();
 var bodyParser = require('body-parser');
+var exec = require('child_process').exec;
 var PORT = 55923;
 
-// create reusable transporter object using the default SMTP transport
-var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+app.use(bodyParser.json());
 
-app.use(bodyParser.json()); // for parsing application/json
-
-app.post(secret.path, function (req, res) {
-  // setup e-mail data with unicode symbols
-  var mailOptions = {
-      from: secrets.mailbot, // sender address
-      to: secrets.recipients, // list of receivers
-      subject: 'Mail error for ' + secrets.recipients, // Subject line
-      text: JSON.stringify(req.body, null, 4) // plaintext body
-  };
-
-  // send mail with defined transport object
-  transporter.sendMail(mailOptions, function(error, info){
-      if(error){
-          return console.log(error);
-      }
-      console.log('Message sent: ' + info.response);
+app.post(secrets.path, function (req, res) {
+  console.log(req.body);
+  exec("curl -s"
+  + " --user 'api:" + secrets.apikey + "'"
+  + " " + secrets.mailapi
+  + " -F from='"            + secrets.mailbot + "'"
+  + " -F to='"              + secrets.recipients + "'"
+  + " -F subject='Mailerr " + secrets.recipients + "'"
+  + " -F text='"            + JSON.stringify(req.body) + "'",
+  function(error, stdout, stderr){
+    console.log('message: ' + JSON.stringify(req.body));
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+    if (error !== null) {
+        console.log('exec error: ' + error);
+    }
+    else{
+      res.send('stdout: '+ stdout + '\r\nstderr: ' + stderr);
+      res.end();
+    }
   });
 });
 
