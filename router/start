@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # You'll want to run `sudo pm2 startup amazon` and `sudo pm2 save`.
 
 # Unfortunately, pm2 startup doesn't work very well, and I had to rename
