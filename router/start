@@ -1,1 +1,1 @@
-nohup sudo node router.js >/dev/null &
+sudo PM2_HOME='/home/ec2-user/.pm2' pm2 start router.js --name="revprox"
