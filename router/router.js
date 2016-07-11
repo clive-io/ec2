@@ -1,15 +1,16 @@
 var PORT = 10000;
 var SAVEFILE = "~/.router/save.json";
 
+var expandTilde = require('expand-tilde');
 var fs = require('fs');
 var proxy = require('redbird')({
   port: 80,
   xfwd: false,
   ssl: {
     port: 443,
-    key: "~/.router/certs/default.key",
-    cert: "~/.router/certs/default.crt",
-    ca: ["~/.router/certs/default.ca"]
+    key: expandTilde("~/.router/certs/default.key"),
+    cert: expandTilde("~/.router/certs/default.crt"),
+    ca: [expandTilde("~/.router/certs/default.ca")]
   },
   bunyan: false
 });
@@ -127,7 +128,7 @@ http.on('listening', function(){
 });
 
 //Check that ~/.router and savefile exist
-SAVEFILE = require('expand-tilde')(SAVEFILE);
+SAVEFILE = expandTilde(SAVEFILE);
 require('mkdirp')(require('path').dirname(SAVEFILE), function(err){
   if(err){
     console.error('Unable to access savefile: mkdirp error');
