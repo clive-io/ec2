@@ -74,8 +74,8 @@ app.get(['/', '/export'], function(req, res){
 app.post('/import', function(req, res){
   //`curl -H "Content-Type: application/json" --data @FILEPATH localhost:10000/import`
   importJSON(req.body);
-  save(res.write, function(){
-    res.send('Sent');
+  save(function(r){res.write(r);}, function(){
+    res.send('Imported.');
   });
 });
 
@@ -89,7 +89,7 @@ app.get('/load', function(req, res){
 app.get(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
   proxy.unregister(req.params[0]);
   proxy.register(req.params[0], 'http://localhost:' + req.params[1]);
-  save(res.write, function(){
+  save(function(r){res.write(r);}, function(){
     res.send('Registered: http://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1] + '\r\n');
   });
 });
@@ -110,14 +110,14 @@ app.post(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
       ca: req.body.ca
     }
   });
-  save(res.write, function(){
+  save(function(r){res.write(r);}, function(){
     res.send('Registered: https://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1] + '\r\n');
   });
 });
 
 app.get(/^\/unregister\/([a-zA-Z0-9\.]+)/, function(req, res){
   proxy.unregister(req.params[0]);
-  save(res.write, function(){
+  save(function(r){res.write(r);}, function(){
     res.send('Unregistered: ' + req.params[0] + '\r\n');
   });
 });
