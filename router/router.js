@@ -3,15 +3,21 @@ var SAVEFILE = "~/.router/save.json";
 
 var expandTilde = require('expand-tilde');
 var fs = require('fs');
+
+var sslDefault = {
+  port: 443,
+  key: expandTilde("~/.router/certs/default.key"),
+  cert: expandTilde("~/.router/certs/default.crt"),
+  ca: [expandTilde("~/.router/certs/default.ca")]
+};
+if(!checkSSL(sslDefault)){
+  console.error("inaccessible default SSL config");
+  process.exit(1);
+}
 var proxy = require('redbird')({
   port: 80,
   xfwd: false,
-  ssl: {
-    port: 443,
-    key: expandTilde("~/.router/certs/default.key"),
-    cert: expandTilde("~/.router/certs/default.crt"),
-    ca: [expandTilde("~/.router/certs/default.ca")]
-  },
+  ssl: sslDefault,
   bunyan: false
 });
 var express = require('express');
@@ -20,6 +26,34 @@ var http =  require('http').Server(app);
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
+
+function checkSSL(obj, cb){
+  if(!cb) cb = console.error;
+  if(typeof obj.key !== "string" || typeof obj.cert !== "string"){
+    cb("key and cert paths must be valid strings!");
+    return false;
+  }
+  else try{
+    fs.accessSync(obj.key, fs.R_OK);
+    fs.accessSync(obj.cert, fs.R_OK);
+    if(typeof obj.ca === "undefined")
+      cb("WARNING: Certificate has no CAs associated with it.");
+    else{
+      if(typeof obj.ca === "string")
+        obj.ca = [obj.ca];
+      if(typeof obj.ca !== "object"){
+        cb("CA variable type is wrong");
+        return false;
+      }
+      for(var i = 0; i < obj.ca.length; i++)
+        fs.accessSync(obj.ca[i], fs.R_OK);
+    }
+  }catch(e){
+    cb(e);
+    return false;
+  }
+  return true;
+}
 
 function exportJSON(){
   var routes = {};
@@ -95,22 +129,22 @@ app.get(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
   });
 });
 app.post(/^\/register\/([a-zA-Z0-9\.]+)\/([0-9]+)/, function(req, res){
-  if(req.body.key !== undefined || req.body.cert !== undefined){
-    try{
-      fs.accessSync(req.body.key, fs.constants.R_OK);
-      fs.accessSync(req.body.cert, fs.constants.R_OK);
-    }catch(e){
-      res.send('Failure: provided SSL key or cert not accessible\r\n');
-      return;
-    }
+  if(typeof req.body !== "object" || Object.keys(req.body).length == 0){
+    proxy.unregister(req.params[0]);
+    proxy.register(req.params[0], 'http://localhost:' + req.params[1], { ssl: true });
+  }else if(!checkSSL(req.body)){
+    res.send('Failure: provided SSL key or cert not accessible\r\n');
+    return;
+  }else{
+    proxy.unregister(req.params[0]);
+    proxy.register(req.params[0], 'http://localhost:' + req.params[1], {
+      ssl: {
+        key: req.body.key,
+        cert: req.body.cert,
+        ca: req.body.ca
+      }
+    });
   }
-  proxy.register(req.params[0], 'http://localhost:' + req.params[1], {
-    ssl: {
-      key: req.body.key, //if they're both undefined (as above), then this makes no difference.
-      cert: req.body.cert,
-      ca: req.body.ca
-    }
-  });
   save(function(r){res.write(r);}, function(){
     res.send('Registered: https://' + req.params[0] + ' => ' + 'http://localhost:' + req.params[1] + '\r\n');
   });
