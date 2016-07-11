@@ -4,7 +4,7 @@ var SAVEFILE = "~/.router/save.json";
 var fs = require('fs');
 
 function expandTilde(str){
-  str.replace('~', '/ec2-user');
+  return str.replace('~', '/ec2-user');
 }
 
 var sslDefault = {
