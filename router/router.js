@@ -1,8 +1,11 @@
 var PORT = 10000;
 var SAVEFILE = "~/.router/save.json";
 
-var expandTilde = require('expand-tilde');
 var fs = require('fs');
+
+function expandTilde(str){
+  str.replace('~', '/ec2-user');
+}
 
 var sslDefault = {
   port: 443,
