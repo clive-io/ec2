@@ -39,14 +39,14 @@ function importJSON(routes){
 
 //save() will log stuff.
 //save(cb) will callback on success or failure.
-//save(err, success) will callback err on failure, success on success.
-function save(err, success){
-       if(typeof err !== "function" && typeof success !== "function"){ err = console.error; success = console.log; }
-  else if(typeof err === "function" && typeof success !== "function"){ success = err; }
+//save(error, success) will callback error on failure, success on success.
+function save(error, success){
+       if(typeof error !== "function" && typeof success !== "function"){ error = console.error; success = console.log; }
+  else if(typeof error === "function" && typeof success !== "function"){ success = error; }
   
   var str = JSON.stringify(exportJSON());
   fs.writeFile(SAVEFILE, str, function(err){
-    if(err) err('save: writefile error: ' + err);
+    if(err) error('save: writefile error: ' + err);
     else success('Saved: ' + str);
   });
 }
@@ -74,7 +74,9 @@ app.get(['/', '/export'], function(req, res){
 app.post('/import', function(req, res){
   //`curl -H "Content-Type: application/json" --data @FILEPATH localhost:10000/import`
   importJSON(req.body);
-  save(res.send);
+  save(res.write, function(){
+    res.send('Sent');
+  });
 });
 
 app.get('/save', function(req, res){
