@@ -14,13 +14,13 @@ app.post(secrets.path, function (req, res) {
   + " -F from='"            + secrets.mailbot + "'"
   + " -F to='"              + secrets.recipients + "'"
   + " -F subject='Mailerr " + secrets.recipients + "'"
-  + " -F text='"            + JSON.stringify(req.body) + "'",
+  + " -F text='"            + JSON.stringify(req.body) + "\r\n" + secrets.response + "'",
   function(error, stdout, stderr){
     console.log('message: ' + JSON.stringify(req.body));
     console.log('stdout: ' + stdout);
     console.log('stderr: ' + stderr);
     if (error !== null) {
-        console.log('exec error: ' + error);
+      console.log('exec error: ' + error);
     }
     else{
       res.send('stdout: '+ stdout + '\r\nstderr: ' + stderr);
@@ -30,5 +30,5 @@ app.post(secrets.path, function (req, res) {
 });
 
 app.listen(PORT, 'localhost', function(){
-  console.log('Listening on localhost:'+PORT);
+  console.log('Listening on localhost:' + PORT);
 });
