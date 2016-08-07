@@ -8,9 +8,7 @@ app.use(bodyParser.json());
 
 app.post(secrets.path, function (req, res) {
   console.log(req.body);
-  exec("curl -s"
-  + " --user 'api:" + secrets.apikey + "'"
-  + " " + secrets.mailapi
+  exec("curl -s " + secrets.mailapi
   + " -F from='"            + secrets.mailbot + "'"
   + " -F to='"              + secrets.recipients + "'"
   + " -F subject='Mailerr " + secrets.recipients + "'"
