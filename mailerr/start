@@ -1,3 +1,0 @@
-#!/bin/sh
-curl localhost:10000/register/mailerr.clive.io/55923
-pm2 start mailerr.js --name="mailerr"
