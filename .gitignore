@@ -1,6 +1,1 @@
 node_modules
-serverfiles
-*.log
-*.pyc
-tf/MNIST_data
-mailerr/secrets.js
