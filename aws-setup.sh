@@ -3,6 +3,11 @@
 # Python: Numpy, Twisted, Tensorflow (assumes python and pip)
 # Nodejs: Node, NPM
 
+echo This is not meant to be run as a script, only as a guide.
+return
+exit
+
+
 INSTALLROOT="~/aws-setup"
 cd $INSTALLROOT
 
@@ -46,13 +51,8 @@ read -p "That should've printed 'Hello, TensorFlow!' and '42'."
 
 
 # INSTALL nodejs
-sudo yum -y install gcc-c++ make openssl-devel git
-git clone git://github.com/joyent/node.git
-cd node
-git tag -l
-git checkout v0.12.7
-./configure
-make && sudo make install
+curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
+yum -y install nodejs
 read -p "About to test node. [enter]"
 node "../gh/node/node-test.js"
 read -p "Tested node. Should've outputted 'Hello world!'. [enter]"
@@ -60,8 +60,12 @@ cd $INSTALLROOT
 
 
 # INSTALL npm
-git clone https://github.com/isaacs/npm.git
+git clone https://github.com/npm/npm.git
 cd npm
+git checkout v3.9.6
+sudo make install
+
+
 echo "Now, add ':/usr/local/bin' to the line 'Defaults secure_path = ...' in sudoers."
 read -p "Ready?"
 sudo nano /etc/sudoers
