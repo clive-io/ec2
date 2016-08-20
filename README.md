@@ -1,9 +1,9 @@
-EC2 (various testing things for my EC2 server)
-==============================================
+EC2 Server Suite
+================
 Copyright (c) 2016 Clive Chan.
 MIT license.
 
-A few things that I use on my EC2 server.
+A collection of programs that I run on my EC2 server.
 
 External repos
 --------------
