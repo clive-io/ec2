@@ -3,10 +3,11 @@ EC2 Server Suite
 Copyright (c) 2016 Clive Chan.
 MIT license.
 
-A collection of programs that I run on my EC2 server.
+A collection of programs (mostly in NodeJS) that I use to admin my EC2 server.
 
 External repos
 --------------
+  - [cchan/uphook](https://github.com/cchan/uphook) - NPM package containing Express middleware to automatically update and restart an application based on a github/gitlab webhook.
   - [cchan/ec2-router](https://github.com/cchan/ec2-router) - A reverse proxy server that I use for all my EC2 websites; contains command-line interface to change routes on the fly and autosaving functionality.
   - [cchan/ec2-mailerr](https://github.com/cchan/ec2-mailerr) - A monitor for Mailgun error webhooks, which will email me if my cc@clive.io email bounces due to my unconventional email setup.
   - [cchan/ec2-py-registrar](https://github.com/cchan/ec2-py-registrar) - A for-fun project (kind of built for [lex.ma](http://lex.ma)) that allows registration of subdomains and securely jailed FTP uploading of website files.
